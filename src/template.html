@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ความพึงพอใจผู้บริจาคเลือด 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: report sheet — sticky period bar on top, tabbed panels, summary reads top-down (KPIs → per-point table → rounds → trend → respondents) */
+:root{
+  color-scheme: light;
+  --bg:#f6f4f4; --surface:#ffffff; --sunk:#f0ecec;
+  --ink:#1e1819; --ink-2:#574e50; --muted:#857b7d; --line:#e4dddf; --line-2:#d3cacc;
+  --accent:#a3172f; --accent-ink:#ffffff; --accent-soft:#f7e4e7;
+  --l5:#1c5cab; --l4:#86b6ef; --l3:#cbc6c5; --l2:#f4a27c; --l1:#d4491c;
+  --good:#0b7a3b; --warn:#a35a00; --warn-soft:#fff1dc;
+  --font:"IBM Plex Sans Thai", "Leelawadee UI", Tahoma, "Noto Sans Thai", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#151112; --surface:#1f1a1b; --sunk:#191415;
+    --ink:#f3eeef; --ink-2:#c7bcbe; --muted:#93888a; --line:#342c2e; --line-2:#463c3e;
+    --accent:#e45a70; --accent-ink:#1a0d10; --accent-soft:#3b1d23;
+    --l5:#5598e7; --l4:#1c5cab; --l3:#5b5657; --l2:#a8481f; --l1:#f07a4a;
+    --good:#4cc47e; --warn:#f0a43c; --warn-soft:#3a2a12;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#151112; --surface:#1f1a1b; --sunk:#191415;
+  --ink:#f3eeef; --ink-2:#c7bcbe; --muted:#93888a; --line:#342c2e; --line-2:#463c3e;
+  --accent:#e45a70; --accent-ink:#1a0d10; --accent-soft:#3b1d23;
+  --l5:#5598e7; --l4:#1c5cab; --l3:#5b5657; --l2:#a8481f; --l1:#f07a4a;
+  --good:#4cc47e; --warn:#f0a43c; --warn-soft:#3a2a12;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--font);}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.3}
+.num,td.n,.kpi b{font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* masthead */
+.mast{padding-block:28px 18px}
+.eyebrow{font-size:12.5px;letter-spacing:.06em;color:var(--accent);font-weight:600;display:flex;gap:8px;align-items:center}
+.eyebrow .drop{width:10px;height:13px;background:var(--accent);border-radius:50% 50% 50% 50%/62% 62% 38% 38%;clip-path:polygon(50% 0,100% 62%,92% 85%,70% 100%,30% 100%,8% 85%,0 62%)}
+.mast h1{font-size:clamp(22px,3.2vw,30px);font-weight:700;margin-top:6px}
+.mast .sub{color:var(--ink-2);margin-top:4px;font-size:14.5px}
+
+/* control bar */
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding-block:10px}
+.seg{display:flex;flex-wrap:wrap;background:var(--sunk);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:14px;color:var(--ink-2);line-height:1.35;text-align:left}
+.seg button small{display:block;font-size:11.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0/.12);font-weight:600}
+.seg button[aria-pressed="true"] small{color:var(--accent)}
+.custom{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--ink-2)}
+.custom input[type=date]{background:var(--surface);border:1px solid var(--line-2);border-radius:7px;padding:5px 8px;font-size:13.5px}
+.opts{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--ink-2)}
+.opts select{background:var(--surface);border:1px solid var(--line-2);border-radius:7px;padding:5px 8px;font-size:13.5px}
+.opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.exports{margin-left:auto;display:flex;gap:8px}
+.btn{border:1px solid var(--line-2);background:var(--surface);padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:500;font-size:14px;display:inline-flex;gap:7px;align-items:center}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn svg{width:16px;height:16px}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:18px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 14px;cursor:pointer;color:var(--ink-2);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.tabs .cnt{font-size:12px;color:var(--muted);margin-left:4px}
+.scope{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink-2);padding-block:12px 4px}
+.scope b{color:var(--ink);font-weight:600}
+.panel{display:none;padding-block:10px 48px}
+.panel.active{display:block}
+
+section.block{margin-top:26px}
+.block > header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.block h2{font-size:18.5px;font-weight:600}
+.block .note{font-size:12.5px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:8px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.kpi span{display:block;font-size:13px;color:var(--ink-2)}
+.kpi b{display:block;font-size:28px;font-weight:600;line-height:1.25;margin-top:4px;letter-spacing:-.01em}
+.kpi b small{font-size:14px;font-weight:500;color:var(--muted);margin-left:3px}
+.kpi em{font-style:normal;font-size:12.5px;color:var(--muted);display:block;margin-top:2px}
+.kpi.lead{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.kpi.lead span,.kpi.lead em,.kpi.lead b small{color:color-mix(in srgb,var(--accent-ink) 78%,transparent)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:1px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.kpi .pill{display:inline-block}
+.kpi.lead .pill{background:color-mix(in srgb,var(--accent-ink) 20%,transparent);color:var(--accent-ink)}
+
+/* tables */
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 12px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+thead th{font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--sunk);white-space:nowrap;position:sticky;top:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.sec td{background:var(--sunk);font-weight:600}
+tr.sec td:first-child{color:var(--ink)}
+tr.total td{font-weight:700;border-top:2px solid var(--line-2);border-bottom:0}
+tbody tr:last-child td{border-bottom:0}
+.code{color:var(--muted);font-family:var(--mono);font-size:12.5px;margin-right:6px}
+.lvl{font-size:12.5px;white-space:nowrap}
+.lvl.top{color:var(--good);font-weight:600}
+.dist{display:flex;gap:2px;height:12px;min-width:140px;border-radius:3px;overflow:hidden}
+.dist i{display:block;height:100%}
+.dist i:first-child{border-radius:3px 0 0 3px}.dist i:last-child{border-radius:0 3px 3px 0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.delta.up{color:var(--good)} .delta.down{color:var(--l1)}
+
+/* charts */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chart{padding:14px 16px 8px;min-width:0}
+.chart h3{font-size:14.5px;font-weight:600}
+.chart .note{margin-top:2px}
+.chart svg{display:block;width:100%;height:auto;margin-top:6px;overflow:visible}
+.ax{fill:var(--muted);font-size:11px;font-family:var(--font)}
+.vl{fill:var(--ink-2);font-size:10.5px;font-family:var(--font);font-variant-numeric:tabular-nums}
+.grid{stroke:var(--line);stroke-width:1}
+.hit{fill:transparent;cursor:default}
+.hit:hover + .hl, .hl.on{opacity:1}
+
+.demo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.demo .card{padding:14px 16px;min-width:0}
+.demo h3{font-size:14.5px;font-weight:600;margin-bottom:10px}
+.hrow{display:grid;grid-template-columns:minmax(80px,auto) 1fr auto;gap:10px;align-items:center;font-size:13.5px;padding-block:4px}
+.hrow .track{height:10px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.hrow .track i{display:block;height:100%;background:var(--accent);border-radius:0 3px 3px 0}
+.hrow .v{font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap;text-align:right}
+.hrow .v b{color:var(--ink);font-weight:600}
+
+/* comments */
+.cmtools{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line-2);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip .c{opacity:.7;margin-left:4px;font-variant-numeric:tabular-nums}
+.search{background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:14px;min-width:0;width:min(280px,100%)}
+.cmlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.cm{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0;break-inside:avoid}
+.cm.low{border-color:color-mix(in srgb,var(--l1) 55%,var(--line))}
+.cm .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12.5px;color:var(--muted)}
+.cm .meta .pt{color:var(--accent);font-weight:600}
+.cm .meta .flag{background:var(--warn-soft);color:var(--warn);font-weight:600;padding:0 8px;border-radius:99px}
+.cm p{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{color:var(--muted);padding:24px 0;text-align:center;grid-column:1/-1}
+
+/* raw */
+.rawtools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:8px;font-size:13.5px;color:var(--ink-2)}
+.rawtools label{display:flex;gap:6px;align-items:center}
+.rawtools select{background:var(--surface);border:1px solid var(--line-2);border-radius:7px;padding:5px 8px}
+#rawWrap{max-height:70vh;margin-top:12px}
+#rawTable{font-size:13px}
+#rawTable td{white-space:nowrap}
+#rawTable td.txt{white-space:normal;min-width:220px;max-width:340px}
+#rawTable td.s{text-align:center;font-variant-numeric:tabular-nums}
+#rawTable td.s.lo{color:var(--l1);font-weight:700}
+#rawTable tr.nc td{color:var(--muted)}
+#rawTable th{white-space:nowrap}
+.fix{font-size:11px;color:var(--warn);margin-left:4px;cursor:help}
+.pager{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-top:10px;font-size:13.5px;color:var(--ink-2)}
+.pager button{border:1px solid var(--line-2);background:var(--surface);border-radius:7px;padding:4px 10px;cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+
+.foot{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-block:16px 30px;margin-top:10px}
+.foot p{margin:2px 0}
+
+#tip{position:fixed;pointer-events:none;z-index:50;background:var(--ink);color:var(--bg);font-size:12.5px;line-height:1.45;padding:7px 10px;border-radius:7px;max-width:260px;opacity:0;transition:opacity .08s}
+#tip.on{opacity:1}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:9px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+#toast.on{opacity:1}
+.printhead{display:none}
+
+@media (max-width:960px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.demo{grid-template-columns:1fr 1fr}.exports{margin-left:0}}
+@media (max-width:640px){.bar{position:static}.kpis{grid-template-columns:1fr 1fr}.two,.demo,.cmlist{grid-template-columns:1fr}.kpi b{font-size:24px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+@media print{
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    color-scheme:light;
+    --bg:#ffffff; --surface:#ffffff; --sunk:#f3f0f0;
+    --ink:#1e1819; --ink-2:#4d4547; --muted:#7a7072; --line:#dcd4d6; --line-2:#c9bfc1;
+    --accent:#a3172f; --accent-ink:#ffffff; --accent-soft:#f7e4e7;
+    --l5:#1c5cab; --l4:#86b6ef; --l3:#cbc6c5; --l2:#f4a27c; --l1:#d4491c;
+    --good:#0b7a3b; --warn:#a35a00; --warn-soft:#fff1dc;
+  }
+  @page{size:A4;margin:12mm 11mm}
+  body{font-size:11.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body:not(.pr-cm) #panel-comments{display:none!important}
+  .scope,.bar,.tabs,.cmtools,.rawtools,.pager,#panel-raw,#tip,#toast,.noprint{display:none!important}
+  .panel{display:block!important;padding-block:0}
+  .wrap{max-width:none;padding:0}
+  .mast{padding-block:0 6px}
+  .printhead{display:block;font-size:12px;color:var(--ink-2);margin-bottom:6px}
+  .kpis{grid-template-columns:repeat(5,1fr);gap:6px}
+  .kpi{padding:8px 10px}.kpi b{font-size:20px}
+  .two{grid-template-columns:1fr 1fr}.demo{grid-template-columns:repeat(3,1fr)}
+  .cmlist{grid-template-columns:1fr 1fr;gap:6px}
+  section.block{margin-top:14px;break-inside:avoid}
+  section.block.long{break-inside:auto}
+  #panel-comments{break-before:page}
+  .tscroll{overflow:visible}
+  table{font-size:10.5px} th,td{padding:4px 7px}
+  thead th{position:static}
+  tr{break-inside:avoid}
+  .dist{min-width:90px}
+}
+</style>
+</head>
+<body>
+<div class="wrap mast">
+  <div class="eyebrow"><span class="drop" aria-hidden="true"></span>ศูนย์รับบริจาคเลือดศิริราช · ห้องรับบริจาคเลือด</div>
+  <h1>สรุปผลการประเมินความพึงพอใจของผู้บริจาคเลือด ปีงบประมาณ 2569</h1>
+  <div class="sub">แบบประเมิน 5 จุดบริการ 14 ข้อ มาตราส่วน 5 ระดับ (5 = พึงพอใจมากที่สุด, 1 = พึงพอใจน้อยที่สุด)</div>
+  <div class="printhead" id="printHead"></div>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="seg" role="group" aria-label="ช่วงเวลา">
+      <button type="button" id="m-fy" data-mode="fy">ทั้งปีงบประมาณ 2569<small>ต.ค. 68 – ก.ย. 69</small></button>
+      <button type="button" id="m-r1" data-mode="r1">รอบที่ 1<small>ต.ค. 68 – มี.ค. 69</small></button>
+      <button type="button" id="m-r2" data-mode="r2">รอบที่ 2<small>เม.ย. – ก.ย. 69</small></button>
+      <button type="button" id="m-custom" data-mode="custom">กำหนดเอง<small id="customHint">เลือกวันที่</small></button>
+    </div>
+    <div class="custom">
+      <label for="dFrom">ตั้งแต่</label><input type="date" id="dFrom">
+      <label for="dTo">ถึง</label><input type="date" id="dTo">
+    </div>
+    <div class="opts">
+      <label for="basis">นับตาม</label>
+      <select id="basis">
+        <option value="ts">วันที่ตอบแบบประเมิน</option>
+        <option value="dd">วันที่บริจาคเลือด</option>
+      </select>
+      <label for="incNo"><input type="checkbox" id="incNo"> รวมผู้ไม่ยินยอมให้ใช้ข้อมูล</label>
+    </div>
+    <div class="exports">
+      <button type="button" class="btn" id="btnXlsx" title="ดาวน์โหลดสรุปผลและข้อมูลดิบตามช่วงเวลาที่เลือกเป็นไฟล์ Excel">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 2v8m0 0L5 7m3 3 3-3M3 12.5h10"/></svg>Export Excel</button>
+      <button type="button" class="btn primary" id="btnPdf" title="พิมพ์หน้าสรุปผล (ถ้าอยู่แท็บข้อติชม จะพิมพ์รายการข้อติชมที่กรองไว้ต่อท้าย) แล้วเลือกปลายทาง “บันทึกเป็น PDF”">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6V2h8v4M4 11H2.5V6h11v5H12M4 9h8v5H4z"/></svg>Export PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="t-summary" data-tab="summary">สรุปผล</button>
+    <button type="button" role="tab" id="t-comments" data-tab="comments">ข้อติชม / เสนอแนะ<span class="cnt" id="cntCm"></span></button>
+    <button type="button" role="tab" id="t-raw" data-tab="raw">ข้อมูลดิบ<span class="cnt" id="cntRaw"></span></button>
+  </div>
+  <div class="scope" id="scope"></div>
+
+  <!-- SUMMARY -->
+  <div class="panel" id="panel-summary">
+    <div class="kpis" id="kpis"></div>
+
+    <section class="block long">
+      <header><h2>ผลการประเมินรายข้อ แยกตามจุดบริการ</h2>
+        <div class="legend" id="lkLegend"></div></header>
+      <div class="tscroll"><table id="itemTable"></table></div>
+      <p class="note" style="margin:8px 2px 0">เกณฑ์แปลผลค่าเฉลี่ย: 4.51–5.00 มากที่สุด · 3.51–4.50 มาก · 2.51–3.50 ปานกลาง · 1.51–2.50 น้อย · 1.00–1.50 น้อยที่สุด &nbsp;|&nbsp; ร้อยละ (x̄) = x̄ ÷ 5 × 100 &nbsp;|&nbsp; ร้อยละพึงพอใจ = สัดส่วนผู้ให้คะแนน 4–5</p>
+    </section>
+
+    <section class="block">
+      <header><h2>เปรียบเทียบรอบที่ 1 และรอบที่ 2</h2><span class="note">ใช้ข้อมูลทั้งปีงบประมาณ 2569 ไม่ขึ้นกับช่วงที่เลือกด้านบน</span></header>
+      <div class="tscroll"><table id="roundTable"></table></div>
+    </section>
+
+    <section class="block">
+      <header><h2>แนวโน้มรายเดือน</h2></header>
+      <div class="two">
+        <div class="card chart"><h3>จำนวนผู้ตอบแบบประเมิน</h3><div class="note">ราย / เดือน</div><svg id="chCount" role="img" aria-label="กราฟแท่งจำนวนผู้ตอบรายเดือน"></svg></div>
+        <div class="card chart"><h3>คะแนนเฉลี่ยรวม 14 ข้อ</h3><div class="note" id="meanAxisNote">เต็ม 5</div><svg id="chMean" role="img" aria-label="กราฟเส้นคะแนนเฉลี่ยรายเดือน"></svg></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <header><h2>ข้อมูลทั่วไปของผู้ตอบแบบประเมิน</h2></header>
+      <div class="demo" id="demo"></div>
+    </section>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="panel" id="panel-comments">
+    <section class="block" style="margin-top:6px">
+      <header><h2>ข้อติชม และข้อเสนอแนะ</h2><span class="note" id="cmNote"></span></header>
+      <div class="cmtools">
+        <div class="chips" id="cmChips"></div>
+        <input type="search" class="search" id="cmQ" placeholder="ค้นหาข้อความ…" aria-label="ค้นหาข้อเสนอแนะ">
+        <label class="opts"><input type="checkbox" id="cmLow"> เฉพาะผู้ที่ให้คะแนน ≤ 3 อย่างน้อย 1 ข้อ</label>
+        <label class="opts"><input type="checkbox" id="cmTrivial" checked> ซ่อนคำตอบว่าง เช่น “-”, “ไม่มี”</label>
+      </div>
+      <div class="cmlist" id="cmList"></div>
+    </section>
+  </div>
+
+  <!-- RAW -->
+  <div class="panel" id="panel-raw">
+    <div class="rawtools">
+      <input type="search" class="search" id="rawQ" placeholder="ค้นหาในทุกคอลัมน์…" aria-label="ค้นหาข้อมูลดิบ">
+      <label><input type="checkbox" id="rawLow"> เฉพาะแถวที่มีคะแนน ≤ 3</label>
+      <label for="pageSize">แสดง</label>
+      <select id="pageSize"><option>25</option><option selected>50</option><option>100</option><option value="0">ทั้งหมด</option></select>
+      <span id="rawInfo"></span>
+    </div>
+    <div class="tscroll" id="rawWrap"><table id="rawTable"></table></div>
+    <div class="pager" id="pager"></div>
+  </div>
+
+  <div class="foot">
+    <p>ที่มา: แบบประเมินความพึงพอใจผู้บริจาคเลือด (Google Forms) · ข้อมูลตอบกลับ 18 พ.ย. 2568 – 13 ต.ค. 2569 รวม <span id="totalAll"></span> ราย</p>
+    <p>“วันที่บริจาคเลือด” ปรับแก้จากค่าที่กรอก (พ.ศ.→ค.ศ., ปีพิมพ์ผิด) ในกรณีที่ไม่สามารถอ่านได้หรือห่างจากวันที่ตอบเกิน 90 วัน ใช้วันที่ตอบแบบประเมินแทน (<span id="fixCount"></span> ราย)</p>
+  </div>
+</div>
+
+<div id="tip" role="tooltip"></div>
+<div id="toast" role="status"></div>
+
+<script>/*__XLSX__*/</script>
+<script>
+const RAW = /*__DATA__*/;
+const R = RAW.map((r,i)=>({id:i+1, ts:r[0], tsd:r[0].slice(0,10), ddRaw:r[1], dd:r[2], ddFix:r[3], consent:r[4], sex:r[5], age:r[6], freq:r[7], sc:r[8], cm:r[9], ret:r[10], rec:r[11], low:r[8].some(v=>v<=3)}));
+
+const SECTIONS = ['จุดลงทะเบียนผู้บริจาคเลือด','จุดสัมภาษณ์ คัดกรองผู้บริจาคเลือด','จุดบริจาคเลือด','จุดบริการน้ำดื่ม','ภาพรวมการให้บริการของศูนย์ฯ'];
+const SEC_SHORT = ['ลงทะเบียน','สัมภาษณ์/คัดกรอง','จุดบริจาคเลือด','บริการน้ำดื่ม','ภาพรวม'];
+const ITEMS = [
+ ['2.1',0,'การให้บริการของเจ้าหน้าที่'],['2.2',0,'การสื่อสารของเจ้าหน้าที่'],
+ ['3.1',1,'การให้บริการของเจ้าหน้าที่'],['3.2',1,'การสื่อสารของเจ้าหน้าที่'],
+ ['4.1',2,'การให้บริการของเจ้าหน้าที่'],['4.2',2,'การสื่อสาร ให้คำแนะนำ ของเจ้าหน้าที่'],['4.3',2,'ความดูแลเอาใจใส่ของเจ้าหน้าที่'],
+ ['5.1',3,'การให้บริการของเจ้าหน้าที่'],['5.2',3,'การสื่อสารของเจ้าหน้าที่'],['5.3',3,'ความดูแลเอาใจใส่ของเจ้าหน้าที่'],
+ ['6.1',4,'ขั้นตอนการบริจาคเลือดมีระบบที่ชัดเจน'],['6.2',4,'ระยะเวลาในการให้บริการมีความเหมาะสม'],['6.3',4,'ความสะอาดของอาคารสถานที่'],['6.4',4,'ความพึงพอใจโดยรวมต่อการให้บริการของศูนย์รับบริจาคเลือด']
+].map(([code,sec,text],i)=>({code,sec,text,i}));
+const CM_POINTS = ['จุดลงทะเบียน','จุดสัมภาษณ์/คัดกรอง','จุดบริจาคเลือด','จุดบริการน้ำดื่ม','กระบวนการโดยรวม'];
+const CM_CODES = ['2.3','3.3','4.4','5.4','7'];
+const ORIG_HEAD = ['ประทับเวลา','โปรดระบุวันที่บริจาคเลือด','วันที่บริจาคเลือด (ปรับแก้แล้ว)','ข้าพเจ้ายินยอมในการเก็บรวบรวม หรือเปิดเผยข้อมูลส่วนบุคคล เพื่อนำข้อมูลไปใช้ประกอบการสรุปผลการตอบแบบประเมินความพึงพอใจดังกล่าว','1. เพศ','2. ช่วงอายุของผู้ให้ข้อมูล','3. ท่านบริจาคเลือดมาแล้วกี่ครั้ง','2.1 การให้บริการของเจ้าหน้าที่','2.2 การสื่อสารของเจ้าหน้าที่','2.3 ข้อติชม เสนอแนะ สำหรับการบริการ ณ จุดลงทะเบียนผู้บริจาคเลือด (ถ้ามี)','3.1 การให้บริการของเจ้าหน้าที่','3.2 การสื่อสารของเจ้าหน้าที่','3.3 ข้อติชม เสนอแนะ สำหรับการบริการ ณ จุดสัมภาษณ์ คัดกรองผู้บริจาคเลือด (ถ้ามี)','4.1 การให้บริการของเจ้าหน้าที่','4.2 การสื่อสาร ให้คำแนะนำ ของเจ้าหน้าที่','4.3 ความดูแลเอาใจใส่ของเจ้าหน้าที่','4.4 ข้อติชม เสนอแนะ สำหรับการบริการ ณ จุดบริจาคเลือด (ถ้ามี)','5.1 การให้บริการของเจ้าหน้าที่','5.2 การสื่อสารของเจ้าหน้าที่','5.3 ความดูแลเอาใจใส่ของเจ้าหน้าที่','5.4 ข้อติชม เสนอแนะ สำหรับการบริการ ณ จุดบริการน้ำดื่ม (ถ้ามี)','6.1 ขั้นตอนการบริจาคเลือดมีระบบที่ชัดเจน','6.2 ระยะเวลาในการให้บริการมีความเหมาะสม','6.3 ความสะอาดของอาคารสถานที่','6.4 โดยรวมแล้วท่านมีความพึงพอใจการให้บริการต่อศูนย์รับบริจาคเลือดอยู่ในระดับใด','6.5 ท่านคิดว่าจะกลับมาบริจาคเลือดที่ ศูนย์รับบริจาคเลือดศิริราช อีกหรือไม่','6.6 ท่านจะแนะนำให้บุคคลอื่นมาบริจาคเลือด ที่ศูนย์รับบริจาคเลือดศิริราชหรือไม่','ข้อติชม เสนอแนะ ต่อกระบวนการบริการรับบริจาคเลือด ของศูนย์รับบริจาคเลือดศิริราช'];
+const PRESETS = {fy:['2025-10-01','2026-09-30'], r1:['2025-10-01','2026-03-31'], r2:['2026-04-01','2026-09-30']};
+const MODE_LABEL = {fy:'ทั้งปีงบประมาณ 2569', r1:'รอบที่ 1 (ต.ค. 2568 – มี.ค. 2569)', r2:'รอบที่ 2 (เม.ย. – ก.ย. 2569)', custom:'กำหนดเอง'};
+const LK = [5,4,3,2,1];
+const LK_LABEL = {5:'มากที่สุด',4:'มาก',3:'ปานกลาง',2:'น้อย',1:'น้อยที่สุด'};
+const TH_M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_MF = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const ALL_MIN = R.reduce((m,r)=>r.tsd<m?r.tsd:m,'9999'), ALL_MAX = R.reduce((m,r)=>r.tsd>m?r.tsd:m,'0000');
+
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f2 = x=>isFinite(x)?x.toFixed(2):'–';
+const pct = (x,d=2)=>isFinite(x)?x.toFixed(d)+'%':'–';
+const nf = x=>x.toLocaleString('th-TH');
+const thDate = iso=>{const [y,m,d]=iso.split('-').map(Number);return `${d} ${TH_M[m-1]} ${y+543}`};
+const thMonth = ym=>{const [y,m]=ym.split('-').map(Number);return `${TH_M[m-1]} ${String(y+543).slice(2)}`};
+const level = m=>!isFinite(m)?'–':m>=4.51?'มากที่สุด':m>=3.51?'มาก':m>=2.51?'ปานกลาง':m>=1.51?'น้อย':'น้อยที่สุด';
+const isTrivial = t=>/^[\s\-_.。,•…]*$/.test(t) || /^(ยัง)?ไม่มี(ค่ะ|ครับ|คะ|ข้อเสนอแนะ|ข้อติชม|ข้อติ|ความเห็น)?\s*$/.test(t.trim()) || /^(no|none|n\/a|nil|nothing|-?ไม่มี-?)$/i.test(t.trim());
+
+let S = {mode:'fy', from:PRESETS.fy[0], to:PRESETS.fy[1], basis:'ts', incNo:false, tab:'summary', cmSec:-1, cmQ:'', cmLow:false, cmTrivial:true, rawQ:'', rawLow:false, page:1, pageSize:50};
+try{ const saved = JSON.parse(localStorage.getItem('bd69-state')||'null'); if(saved) S = Object.assign(S, saved, {page:1, cmQ:'', rawQ:''}); }catch(e){}
+const save = ()=>{ try{ localStorage.setItem('bd69-state', JSON.stringify(S)); }catch(e){} };
+
+const key = r => S.basis==='dd' ? r.dd : r.tsd;
+const range = () => S.mode==='custom' ? [S.from, S.to] : PRESETS[S.mode];
+const base = () => R.filter(r => S.incNo || r.consent);
+function inRange(rows, a, b){ return rows.filter(r=>{const k=key(r);return k>=a && k<=b;}); }
+function current(){ const [a,b]=range(); return inRange(base(), a, b); }
+
+function stat(vals){
+  const n=vals.length, dist={1:0,2:0,3:0,4:0,5:0}; let s=0;
+  for(const v of vals){ s+=v; dist[v]++; }
+  const mean = n? s/n : NaN; let ss=0; for(const v of vals) ss+=(v-mean)**2;
+  const sd = n>1? Math.sqrt(ss/(n-1)) : NaN;
+  return {n, mean, sd, dist, top2: n? (dist[4]+dist[5])/n*100 : NaN, mpct: mean/5*100};
+}
+const itemVals = (rows, idxs) => { const out=[]; for(const r of rows) for(const i of idxs) out.push(r.sc[i]); return out; };
+const secIdx = s => ITEMS.filter(it=>it.sec===s).map(it=>it.i);
+const ALL_IDX = ITEMS.map(it=>it.i);
+
+/* ---------- tooltip ---------- */
+const tip = $('#tip');
+document.addEventListener('mouseover', e=>{ const t=e.target.closest('[data-tip]'); if(!t){tip.classList.remove('on');return;} tip.innerHTML=t.dataset.tip; tip.classList.add('on'); });
+document.addEventListener('mousemove', e=>{ if(!tip.classList.contains('on')) return; const w=tip.offsetWidth,h=tip.offsetHeight; let x=e.clientX+14, y=e.clientY+14; if(x+w>innerWidth-8) x=e.clientX-w-14; if(y+h>innerHeight-8) y=e.clientY-h-14; tip.style.left=x+'px'; tip.style.top=y+'px'; });
+const toast = msg=>{ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2600); };
+
+/* ---------- render ---------- */
+function scopeText(rows){
+  const [a,b]=range();
+  return {label: S.mode==='custom' ? `กำหนดเอง (${thDate(a)} – ${thDate(b)})` : MODE_LABEL[S.mode], dates:`${thDate(a)} – ${thDate(b)}`, n:rows.length};
+}
+function renderScope(rows){
+  const sc = scopeText(rows);
+  const basisTxt = S.basis==='dd'?'วันที่บริจาคเลือด':'วันที่ตอบแบบประเมิน';
+  $('#scope').innerHTML = `<span>ช่วงข้อมูล <b>${esc(sc.label)}</b></span><span>${sc.dates}</span><span>นับตาม <b>${basisTxt}</b></span><span>ผู้ตอบ <b class="num">${nf(sc.n)}</b> ราย</span><span>${S.incNo?'รวมผู้ไม่ยินยอม':'เฉพาะผู้ยินยอมให้ใช้ข้อมูล'}</span>`;
+  $('#printHead').textContent = `ช่วงข้อมูล: ${sc.label} · ${sc.dates} · นับตาม${basisTxt} · ผู้ตอบ ${nf(sc.n)} ราย · ${S.incNo?'รวมผู้ไม่ยินยอม':'เฉพาะผู้ยินยอมให้ใช้ข้อมูล'} · พิมพ์เมื่อ ${thDate(new Date().toISOString().slice(0,10))}`;
+}
+
+function renderKpis(rows){
+  const all = stat(itemVals(rows, ALL_IDX)), ov = stat(itemVals(rows,[13]));
+  const n = rows.length, ret = rows.filter(r=>r.ret).length, rec = rows.filter(r=>r.rec).length;
+  $('#kpis').innerHTML = `
+   <div class="kpi"><span>ผู้ตอบแบบประเมิน</span><b>${nf(n)}<small>ราย</small></b><em>${n?`${thDate(rows.reduce((m,r)=>key(r)<m?key(r):m,'9999'))} – ${thDate(rows.reduce((m,r)=>key(r)>m?key(r):m,'0000'))}`:'ไม่มีข้อมูลในช่วงนี้'}</em></div>
+   <div class="kpi lead"><span>คะแนนเฉลี่ยรวม 14 ข้อ</span><b>${f2(all.mean)}<small>/ 5</small></b><em><span class="pill">${level(all.mean)}</span> &nbsp;S.D. ${f2(all.sd)}</em></div>
+   <div class="kpi"><span>ร้อยละความพึงพอใจ (ระดับ 4–5)</span><b>${pct(all.top2)}</b><em>ข้อ 6.4 ภาพรวม: ${pct(ov.top2)}</em></div>
+   <div class="kpi"><span>จะกลับมาบริจาคอีก</span><b>${n?pct(ret/n*100,1):'–'}</b><em>${nf(ret)} จาก ${nf(n)} ราย</em></div>
+   <div class="kpi"><span>จะแนะนำผู้อื่นมาบริจาค</span><b>${n?pct(rec/n*100,1):'–'}</b><em>${nf(rec)} จาก ${nf(n)} ราย</em></div>`;
+}
+
+const LK_VAR = {5:'--l5',4:'--l4',3:'--l3',2:'--l2',1:'--l1'};
+function distBar(st){
+  if(!st.n) return '';
+  return `<div class="dist">${LK.filter(k=>st.dist[k]).map(k=>`<i style="width:${st.dist[k]/st.n*100}%;background:var(${LK_VAR[k]})" data-tip="ระดับ ${k} (${LK_LABEL[k]})<br><b>${nf(st.dist[k])}</b> ครั้ง · ${pct(st.dist[k]/st.n*100,1)}"></i>`).join('')}</div>`;
+}
+function rowCells(st){
+  return `<td class="n">${f2(st.mean)}</td><td class="n">${f2(st.sd)}</td><td class="n">${pct(st.mpct)}</td><td class="n">${pct(st.top2)}</td><td><span class="lvl ${st.mean>=4.51?'top':''}">${level(st.mean)}</span></td><td>${distBar(st)}</td>`;
+}
+function renderItems(rows){
+  $('#lkLegend').innerHTML = LK.map(k=>`<span><i style="background:var(${LK_VAR[k]})"></i>${k} ${LK_LABEL[k]}</span>`).join('');
+  let h = `<thead><tr><th>จุดบริการ / ข้อประเมิน</th><th class="n">x̄</th><th class="n">S.D.</th><th class="n">ร้อยละ (x̄)</th><th class="n">ร้อยละพึงพอใจ</th><th>ระดับ</th><th>การกระจายคะแนน</th></tr></thead><tbody>`;
+  SECTIONS.forEach((s,si)=>{
+    const st = stat(itemVals(rows, secIdx(si)));
+    h += `<tr class="sec"><td>${si+2}. ${esc(s)}</td>${rowCells(st)}</tr>`;
+    ITEMS.filter(it=>it.sec===si).forEach(it=>{ h += `<tr><td><span class="code">${it.code}</span>${esc(it.text)}</td>${rowCells(stat(itemVals(rows,[it.i])))}</tr>`; });
+  });
+  h += `<tr class="total"><td>รวมทุกข้อ (14 ข้อ)</td>${rowCells(stat(itemVals(rows, ALL_IDX)))}</tr></tbody>`;
+  $('#itemTable').innerHTML = h;
+}
+
+function roundData(){
+  const b = base();
+  return ['r1','r2'].map(m=>inRange(b, ...PRESETS[m]));
+}
+function renderRounds(){
+  const [r1,r2] = roundData();
+  const dcell = (a,b)=>{ if(!isFinite(a)||!isFinite(b)) return '<td class="n">–</td>'; const d=b-a; return `<td class="n"><span class="delta ${d>0.005?'up':d<-0.005?'down':''}">${d>0?'+':''}${d.toFixed(2)}</span></td>`; };
+  let h = `<thead><tr><th>จุดบริการ</th><th class="n">รอบที่ 1 x̄</th><th class="n">ร้อยละพึงพอใจ</th><th class="n">รอบที่ 2 x̄</th><th class="n">ร้อยละพึงพอใจ</th><th class="n">ผลต่าง x̄ (รอบ 2 − รอบ 1)</th></tr></thead><tbody>`;
+  h += `<tr><td>จำนวนผู้ตอบ (ราย)</td><td class="n">${nf(r1.length)}</td><td></td><td class="n">${nf(r2.length)}</td><td></td><td></td></tr>`;
+  const line = (label, idxs, cls='')=>{ const a=stat(itemVals(r1,idxs)), b=stat(itemVals(r2,idxs)); return `<tr class="${cls}"><td>${label}</td><td class="n">${f2(a.mean)}</td><td class="n">${pct(a.top2)}</td><td class="n">${f2(b.mean)}</td><td class="n">${pct(b.top2)}</td>${dcell(a.mean,b.mean)}</tr>`; };
+  SECTIONS.forEach((s,si)=>{ h += line(`${si+2}. ${esc(s)}`, secIdx(si)); });
+  h += line('รวมทุกข้อ (14 ข้อ)', ALL_IDX, 'total') + '</tbody>';
+  $('#roundTable').innerHTML = h;
+}
+
+function monthsBetween(a,b){
+  const out=[]; let [y,m]=a.split('-').map(Number); const [y2,m2]=b.split('-').map(Number);
+  while(y<y2 || (y===y2 && m<=m2)){ out.push(`${y}-${String(m).padStart(2,'0')}`); m++; if(m>12){m=1;y++;} if(out.length>60) break; }
+  return out;
+}
+function renderTrend(rows){
+  let [a,b] = range();
+  if(S.mode==='custom'){ const ks=rows.map(key).sort(); if(ks.length){ a = a<ks[0]?ks[0]:a; b = b>ks[ks.length-1]?ks[ks.length-1]:b; } }
+  const months = monthsBetween(a,b);
+  const data = months.map(ym=>{ const rs=rows.filter(r=>key(r).startsWith(ym)); const st=stat(itemVals(rs,ALL_IDX)); return {ym, n:rs.length, mean:st.mean, top2:st.top2}; });
+  drawCols($('#chCount'), data);
+  drawLine($('#chMean'), data);
+}
+const SVGW=560, SVGH=230, PADL=40, PADR=12, PADT=18, PADB=34;
+function niceMax(v){ if(v<=0) return 10; const p=Math.pow(10,Math.floor(Math.log10(v))); const n=v/p; return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p; }
+function drawCols(svg, data){
+  const W=SVGW,H=SVGH, iw=W-PADL-PADR, ih=H-PADT-PADB, max=niceMax(Math.max(1,...data.map(d=>d.n)));
+  const bw = iw/Math.max(1,data.length), barW=Math.min(34, bw*0.62);
+  const y = v=> PADT + ih - v/max*ih;
+  let g=''; for(let i=0;i<=4;i++){ const v=max/4*i, yy=y(v); g+=`<line class="grid" x1="${PADL}" x2="${W-PADR}" y1="${yy}" y2="${yy}"/><text class="ax" x="${PADL-6}" y="${yy+3.5}" text-anchor="end">${nf(Math.round(v))}</text>`; }
+  let bars='';
+  data.forEach((d,i)=>{
+    const cx=PADL+bw*i+bw/2, x=cx-barW/2, top=y(d.n), h=PADT+ih-top;
+    if(d.n) bars += `<path d="M${x},${PADT+ih} V${top+Math.min(4,h)} Q${x},${top} ${x+Math.min(4,h)},${top} H${x+barW-Math.min(4,h)} Q${x+barW},${top} ${x+barW},${top+Math.min(4,h)} V${PADT+ih} Z" fill="var(--accent)"/>`;
+    bars += `<text class="vl" x="${cx}" y="${top-5}" text-anchor="middle">${d.n?nf(d.n):'0'}</text>`;
+    bars += `<text class="ax" x="${cx}" y="${H-PADB+16}" text-anchor="middle">${thMonth(d.ym)}</text>`;
+    bars += `<rect class="hit" x="${PADL+bw*i}" y="${PADT}" width="${bw}" height="${ih}" data-tip="${TH_MF[+d.ym.slice(5)-1]} ${+d.ym.slice(0,4)+543}<br>ผู้ตอบ <b>${nf(d.n)}</b> ราย"/>`;
+  });
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.innerHTML = g + `<line x1="${PADL}" x2="${W-PADR}" y1="${PADT+ih}" y2="${PADT+ih}" stroke="var(--line-2)"/>` + bars;
+}
+function drawLine(svg, data){
+  const W=SVGW,H=SVGH, iw=W-PADL-PADR, ih=H-PADT-PADB;
+  const vals = data.filter(d=>d.n).map(d=>d.mean);
+  let lo = vals.length? Math.min(4.5, Math.floor((Math.min(...vals)-0.05)*10)/10) : 4.5; const hi = 5;
+  lo = Math.max(1, lo);
+  $('#meanAxisNote').textContent = `เต็ม 5 · แกนตั้งเริ่มที่ ${lo.toFixed(1)} เพื่อให้เห็นความต่าง`;
+  const bw = iw/Math.max(1,data.length);
+  const x = i=> PADL+bw*i+bw/2, y = v=> PADT + ih - (v-lo)/(hi-lo)*ih;
+  const steps = Math.round((hi-lo)/0.1); const every = steps>10? Math.ceil(steps/5):1;
+  let g=''; for(let k=0;k<=steps;k+=every){ const v=lo+k*0.1, yy=y(v); g+=`<line class="grid" x1="${PADL}" x2="${W-PADR}" y1="${yy}" y2="${yy}"/><text class="ax" x="${PADL-6}" y="${yy+3.5}" text-anchor="end">${v.toFixed(1)}</text>`; }
+  let path='', pen=false, dots='', labels='';
+  data.forEach((d,i)=>{
+    labels += `<text class="ax" x="${x(i)}" y="${H-PADB+16}" text-anchor="middle">${thMonth(d.ym)}</text>`;
+    if(!d.n){ pen=false; return; }
+    path += `${pen?'L':'M'}${x(i)},${y(d.mean)} `; pen=true;
+    dots += `<circle cx="${x(i)}" cy="${y(d.mean)}" r="4" fill="var(--l5)" stroke="var(--surface)" stroke-width="2"/><text class="vl" x="${x(i)}" y="${y(d.mean)-9}" text-anchor="middle">${d.mean.toFixed(2)}</text>`;
+  });
+  const hits = data.map((d,i)=>`<rect class="hit" x="${PADL+bw*i}" y="${PADT}" width="${bw}" height="${ih}" data-tip="${TH_MF[+d.ym.slice(5)-1]} ${+d.ym.slice(0,4)+543}<br>${d.n?`คะแนนเฉลี่ย <b>${d.mean.toFixed(2)}</b><br>ร้อยละพึงพอใจ ${pct(d.top2)}<br>ผู้ตอบ ${nf(d.n)} ราย`:'ไม่มีผู้ตอบ'}"/>`).join('');
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.innerHTML = g + `<line x1="${PADL}" x2="${W-PADR}" y1="${PADT+ih}" y2="${PADT+ih}" stroke="var(--line-2)"/>` + `<path d="${path}" fill="none" stroke="var(--l5)" stroke-width="2" stroke-linejoin="round"/>` + dots + labels + hits;
+}
+
+const DEMO = [
+  ['เพศ', r=>r.sex, ['หญิง','ชาย']],
+  ['ช่วงอายุ', r=>r.age, ['17-30 ปี','31-45 ปี','46-60 ปี']],
+  ['จำนวนครั้งที่เคยบริจาค', r=>r.freq, ['1 - 10 ครั้ง','11 - 30 ครั้ง','31-50 ครั้ง','50 ครั้งขึ้นไป']],
+];
+function demoCounts(rows){
+  return DEMO.map(([title,fn,order])=>{ const c={}; rows.forEach(r=>{const v=fn(r)||'ไม่ระบุ'; c[v]=(c[v]||0)+1;}); const keys=[...order.filter(k=>c[k]!==undefined||true), ...Object.keys(c).filter(k=>!order.includes(k))]; return {title, rows: keys.map(k=>[k,c[k]||0])}; });
+}
+function renderDemo(rows){
+  const n=rows.length||1;
+  $('#demo').innerHTML = demoCounts(rows).map(g=>{ const mx=Math.max(1,...g.rows.map(r=>r[1])); return `<div class="card"><h3>${g.title}</h3>${g.rows.map(([k,v])=>`<div class="hrow" data-tip="${esc(k)}: <b>${nf(v)}</b> ราย (${pct(v/n*100,1)})"><span>${esc(k)}</span><span class="track"><i style="width:${v/mx*100}%"></i></span><span class="v"><b>${nf(v)}</b> · ${pct(v/n*100,1)}</span></div>`).join('')}</div>`; }).join('');
+}
+
+/* ---------- comments ---------- */
+function commentRows(rows){
+  const out=[];
+  rows.forEach(r=>r.cm.forEach((t,ci)=>{ if(t) out.push({r, ci, t}); }));
+  return out;
+}
+function filterComments(rows){
+  const q=S.cmQ.trim().toLowerCase();
+  return commentRows(rows).filter(c=> (!S.cmTrivial || !isTrivial(c.t)) && (S.cmSec<0 || c.ci===S.cmSec) && (!S.cmLow || c.r.low) && (!q || c.t.toLowerCase().includes(q)));
+}
+function renderComments(rows){
+  const q=S.cmQ.trim().toLowerCase();
+  const pool = commentRows(rows).filter(c=> (!S.cmTrivial || !isTrivial(c.t)) && (!S.cmLow || c.r.low) && (!q || c.t.toLowerCase().includes(q)));
+  const counts = CM_POINTS.map((_,i)=>pool.filter(c=>c.ci===i).length);
+  $('#cmChips').innerHTML = [`<button type="button" class="chip" data-sec="-1" aria-pressed="${S.cmSec<0}">ทั้งหมด<span class="c">${nf(pool.length)}</span></button>`, ...CM_POINTS.map((p,i)=>`<button type="button" class="chip" data-sec="${i}" aria-pressed="${S.cmSec===i}">${p}<span class="c">${nf(counts[i])}</span></button>`)].join('');
+  const list = filterComments(rows);
+  $('#cntCm').textContent = nf(commentRows(rows).filter(c=>!isTrivial(c.t)).length);
+  $('#cmNote').textContent = `แสดง ${nf(list.length)} ความเห็น`;
+  const LIMIT = 400;
+  $('#cmList').innerHTML = list.length ? list.slice(0,LIMIT).map(c=>`<article class="cm ${c.r.low?'low':''}"><div class="meta"><span class="pt">${CM_POINTS[c.ci]}</span><span>${thDate(key(c.r))}</span><span>ภาพรวม (6.4): ${c.r.sc[13]}/5</span>${c.r.low?`<span class="flag" data-tip="ผู้ตอบรายนี้ให้คะแนน ≤ 3 ในข้อ ${ITEMS.filter(it=>c.r.sc[it.i]<=3).map(it=>it.code).join(', ')}">มีคะแนน ≤ 3</span>`:''}<span>#${c.r.id}</span></div><p>${esc(c.t)}</p></article>`).join('') + (list.length>LIMIT?`<div class="empty">แสดง ${LIMIT} รายการแรก จากทั้งหมด ${nf(list.length)} รายการ ใช้ตัวกรองหรือค้นหาเพื่อจำกัดผล หรือ Export Excel เพื่อดูทั้งหมด</div>`:'') : `<div class="empty">ไม่มีความเห็นตามเงื่อนไขที่เลือก</div>`;
+}
+
+/* ---------- raw ---------- */
+function rawFiltered(rows){
+  const q=S.rawQ.trim().toLowerCase();
+  return rows.filter(r=> (!S.rawLow || r.low) && (!q || [r.ts,r.ddRaw,r.dd,r.sex,r.age,r.freq,...r.cm,r.sc.join(' ')].join(' ').toLowerCase().includes(q)));
+}
+function renderRaw(rows){
+  const list = rawFiltered(rows);
+  $('#cntRaw').textContent = nf(rows.length);
+  const ps = S.pageSize||list.length||1, pages = Math.max(1, Math.ceil(list.length/ps));
+  if(S.page>pages) S.page=pages;
+  const slice = list.slice((S.page-1)*ps, S.page*ps);
+  const sc = ITEMS.map(it=>`<th class="n" data-tip="${esc(SECTIONS[it.sec])}<br>${esc(it.text)}">${it.code}</th>`);
+  let h = `<thead><tr><th class="n">#</th><th>ประทับเวลา</th><th>วันที่บริจาค (ที่กรอก)</th><th>วันที่บริจาค (ปรับแก้)</th><th>ยินยอม</th><th>เพศ</th><th>อายุ</th><th>บริจาคมาแล้ว</th>${sc.join('')}<th>6.5 กลับมาอีก</th><th>6.6 แนะนำ</th>${CM_POINTS.map((p,i)=>`<th>${CM_CODES[i]==='7'?'':CM_CODES[i]+' '}ข้อติชม ${p}</th>`).join('')}</tr></thead><tbody>`;
+  h += slice.map(r=>`<tr class="${r.consent?'':'nc'}"><td class="n">${r.id}</td><td class="num">${r.ts}</td><td>${esc(r.ddRaw)}</td><td class="num">${r.dd}${r.ddFix?'<span class="fix" data-tip="วันที่ที่กรอกอ่านไม่ได้หรือไม่สมเหตุสมผล จึงใช้วันที่ตอบแบบประเมินแทน">ใช้วันที่ตอบ</span>':''}</td><td>${r.consent?'ยินยอม':'ไม่ยินยอม'}</td><td>${esc(r.sex)}</td><td>${esc(r.age)}</td><td>${esc(r.freq)}</td>${r.sc.map(v=>`<td class="s ${v<=3?'lo':''}">${v}</td>`).join('')}<td>${r.ret?'กลับ':'ไม่กลับ'}</td><td>${r.rec?'แนะนำ':'ไม่แนะนำ'}</td>${r.cm.map(t=>`<td class="txt">${esc(t)}</td>`).join('')}</tr>`).join('');
+  if(!slice.length) h += `<tr><td colspan="32" class="empty">ไม่มีข้อมูลตามเงื่อนไขที่เลือก</td></tr>`;
+  $('#rawTable').innerHTML = h + '</tbody>';
+  $('#rawInfo').textContent = `${nf(list.length)} แถว`;
+  $('#pager').innerHTML = `<button type="button" id="pgPrev" ${S.page<=1?'disabled':''}>‹ ก่อนหน้า</button><span>หน้า ${S.page} / ${pages}</span><button type="button" id="pgNext" ${S.page>=pages?'disabled':''}>ถัดไป ›</button>`;
+}
+
+/* ---------- controls ---------- */
+function syncControls(){
+  ['fy','r1','r2','custom'].forEach(m=>$('#m-'+m).setAttribute('aria-pressed', S.mode===m));
+  const [a,b]=range(); $('#dFrom').value=a; $('#dTo').value=b;
+  $('#customHint').textContent = S.mode==='custom' ? `${thDate(a).replace(/ \d{2}(\d{2})$/,' $1')} – ${thDate(b).replace(/ \d{2}(\d{2})$/,' $1')}` : 'เลือกวันที่';
+  $('#basis').value=S.basis; $('#incNo').checked=S.incNo; $('#cmLow').checked=S.cmLow; $('#cmTrivial').checked=S.cmTrivial; $('#rawLow').checked=S.rawLow;
+  $('#pageSize').value=String(S.pageSize);
+  ['summary','comments','raw'].forEach(t=>{ $('#t-'+t).setAttribute('aria-selected', S.tab===t); $('#panel-'+t).classList.toggle('active', S.tab===t); });
+}
+function render(){
+  syncControls();
+  const rows = current();
+  renderScope(rows); renderKpis(rows); renderItems(rows); renderRounds(); renderTrend(rows); renderDemo(rows); renderComments(rows); renderRaw(rows);
+  save();
+}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{ const m=b.dataset.mode; if(m==='custom' && S.mode!=='custom'){ const [a,c]=range(); S.from=a; S.to=c; } S.mode=m; S.page=1; render(); }));
+['#dFrom','#dTo'].forEach(id=>$(id).addEventListener('change',()=>{ let a=$('#dFrom').value, b=$('#dTo').value; if(!a||!b) return; if(a>b) [a,b]=[b,a]; S.mode='custom'; S.from=a; S.to=b; S.page=1; render(); }));
+$('#basis').addEventListener('change',e=>{S.basis=e.target.value; S.page=1; render();});
+$('#incNo').addEventListener('change',e=>{S.incNo=e.target.checked; S.page=1; render();});
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.tab; syncControls(); save();}));
+$('#cmChips').addEventListener('click',e=>{const c=e.target.closest('.chip'); if(!c) return; S.cmSec=+c.dataset.sec; renderComments(current()); save();});
+$('#cmQ').addEventListener('input',e=>{S.cmQ=e.target.value; renderComments(current());});
+$('#cmLow').addEventListener('change',e=>{S.cmLow=e.target.checked; renderComments(current()); save();});
+$('#cmTrivial').addEventListener('change',e=>{S.cmTrivial=e.target.checked; renderComments(current()); save();});
+$('#rawQ').addEventListener('input',e=>{S.rawQ=e.target.value; S.page=1; renderRaw(current());});
+$('#rawLow').addEventListener('change',e=>{S.rawLow=e.target.checked; S.page=1; renderRaw(current()); save();});
+$('#pageSize').addEventListener('change',e=>{S.pageSize=+e.target.value; S.page=1; renderRaw(current()); save();});
+$('#pager').addEventListener('click',e=>{ if(e.target.id==='pgPrev'){S.page--;} else if(e.target.id==='pgNext'){S.page++;} else return; renderRaw(current()); $('#rawWrap').scrollTop=0; });
+
+/* ---------- export ---------- */
+function fileTag(){ const [a,b]=range(); return S.mode==='fy'?'ปีงบ2569':S.mode==='r1'?'รอบ1_ปีงบ2569':S.mode==='r2'?'รอบ2_ปีงบ2569':`${a}_ถึง_${b}`; }
+function exportExcel(){
+  if(typeof XLSX==='undefined'){ toast('โหลดตัวสร้างไฟล์ Excel ไม่สำเร็จ'); return; }
+  const rows = current(), sc = scopeText(rows), basisTxt = S.basis==='dd'?'วันที่บริจาคเลือด':'วันที่ตอบแบบประเมิน';
+  const info = [['สรุปผลการประเมินความพึงพอใจของผู้บริจาคเลือด ศูนย์รับบริจาคเลือดศิริราช ปีงบประมาณ 2569'],['ช่วงข้อมูล', sc.label],['ช่วงวันที่', sc.dates],['นับตาม', basisTxt],['เงื่อนไข', S.incNo?'รวมผู้ไม่ยินยอมให้ใช้ข้อมูล':'เฉพาะผู้ยินยอมให้ใช้ข้อมูล'],['จำนวนผู้ตอบ (ราย)', rows.length],[]];
+  const wb = XLSX.utils.book_new();
+  const r2 = v=>isFinite(v)?Math.round(v*100)/100:'';
+  const line = (label, st)=>[label, st.n, r2(st.mean), r2(st.sd), r2(st.mpct), r2(st.top2), level(st.mean), st.dist[5], st.dist[4], st.dist[3], st.dist[2], st.dist[1]];
+  // 1 summary
+  const a1 = [...info, ['จุดบริการ / ข้อประเมิน','จำนวนคำตอบ','ค่าเฉลี่ย (x̄)','S.D.','ร้อยละ (x̄)','ร้อยละพึงพอใจ (4–5)','ระดับ','ระดับ 5','ระดับ 4','ระดับ 3','ระดับ 2','ระดับ 1']];
+  SECTIONS.forEach((s,si)=>{ a1.push(line(`${si+2}. ${s}`, stat(itemVals(rows,secIdx(si))))); ITEMS.filter(it=>it.sec===si).forEach(it=>a1.push(line(`   ${it.code} ${it.text}`, stat(itemVals(rows,[it.i]))))); });
+  a1.push(line('รวมทุกข้อ (14 ข้อ)', stat(itemVals(rows,ALL_IDX))));
+  const n=rows.length, ret=rows.filter(r=>r.ret).length, rec=rows.filter(r=>r.rec).length;
+  a1.push([], ['6.5 จะกลับมาบริจาคอีก', ret, '', '', '', n?r2(ret/n*100):''], ['6.6 จะแนะนำผู้อื่นมาบริจาค', rec, '', '', '', n?r2(rec/n*100):'']);
+  a1.push([], ['เกณฑ์แปลผล: 4.51–5.00 มากที่สุด, 3.51–4.50 มาก, 2.51–3.50 ปานกลาง, 1.51–2.50 น้อย, 1.00–1.50 น้อยที่สุด']);
+  const ws1 = XLSX.utils.aoa_to_sheet(a1); ws1['!cols']=[{wch:58},{wch:12},{wch:12},{wch:8},{wch:11},{wch:18},{wch:11},{wch:8},{wch:8},{wch:8},{wch:8},{wch:8}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'สรุปรายข้อ');
+  // 2 rounds
+  const [ra,rb] = roundData();
+  const a2 = [['เปรียบเทียบรอบที่ 1 (ต.ค. 2568 – มี.ค. 2569) และรอบที่ 2 (เม.ย. – ก.ย. 2569)'],['นับตาม', basisTxt],[], ['จุดบริการ','รอบที่ 1 x̄','รอบที่ 1 ร้อยละพึงพอใจ','รอบที่ 2 x̄','รอบที่ 2 ร้อยละพึงพอใจ','ผลต่าง x̄'], ['จำนวนผู้ตอบ (ราย)', ra.length, '', rb.length, '', '']];
+  const l2=(label,idxs)=>{const x=stat(itemVals(ra,idxs)), y=stat(itemVals(rb,idxs)); return [label, r2(x.mean), r2(x.top2), r2(y.mean), r2(y.top2), isFinite(x.mean)&&isFinite(y.mean)?r2(y.mean-x.mean):''];};
+  SECTIONS.forEach((s,si)=>{ a2.push(l2(`${si+2}. ${s}`, secIdx(si))); ITEMS.filter(it=>it.sec===si).forEach(it=>a2.push(l2(`   ${it.code} ${it.text}`,[it.i]))); });
+  a2.push(l2('รวมทุกข้อ (14 ข้อ)', ALL_IDX));
+  const ws2 = XLSX.utils.aoa_to_sheet(a2); ws2['!cols']=[{wch:58},{wch:12},{wch:20},{wch:12},{wch:20},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'เปรียบเทียบรอบ');
+  // 3 monthly
+  const ks=rows.map(key).sort(); const months = ks.length? monthsBetween(ks[0], ks[ks.length-1]) : [];
+  const a3 = [...info, ['เดือน','จำนวนผู้ตอบ','ค่าเฉลี่ยรวม 14 ข้อ','ร้อยละพึงพอใจ (4–5)', ...SECTIONS.map((s,i)=>`x̄ ${i+2}. ${SEC_SHORT[i]}`)]];
+  months.forEach(ym=>{ const rs=rows.filter(r=>key(r).startsWith(ym)); const st=stat(itemVals(rs,ALL_IDX)); a3.push([`${TH_MF[+ym.slice(5)-1]} ${+ym.slice(0,4)+543}`, rs.length, r2(st.mean), r2(st.top2), ...SECTIONS.map((_,si)=>r2(stat(itemVals(rs,secIdx(si))).mean))]); });
+  const ws3 = XLSX.utils.aoa_to_sheet(a3); ws3['!cols']=[{wch:22},{wch:12},{wch:16},{wch:18},{wch:14},{wch:16},{wch:16},{wch:14},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'รายเดือน');
+  // 4 demographics
+  const a4 = [...info, ['หัวข้อ','กลุ่ม','จำนวน (ราย)','ร้อยละ']];
+  demoCounts(rows).forEach(g=>g.rows.forEach(([k,v],i)=>a4.push([i?'':g.title, k, v, n?r2(v/n*100):''])));
+  const ws4 = XLSX.utils.aoa_to_sheet(a4); ws4['!cols']=[{wch:24},{wch:18},{wch:12},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws4, 'ข้อมูลทั่วไป');
+  // 5 comments (all non-empty, unfiltered by chips)
+  const a5 = [...info, ['#','วันที่','จุดบริการ','ข้อติชม / เสนอแนะ','คะแนนภาพรวม (6.4)','มีคะแนน ≤ 3']];
+  commentRows(rows).filter(c=>!isTrivial(c.t)).forEach(c=>a5.push([c.r.id, key(c.r), CM_POINTS[c.ci], c.t, c.r.sc[13], c.r.low?'ใช่':'']));
+  const ws5 = XLSX.utils.aoa_to_sheet(a5); ws5['!cols']=[{wch:6},{wch:12},{wch:20},{wch:90},{wch:16},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws5, 'ข้อเสนอแนะ');
+  // 6 raw
+  const a6 = [['#', ...ORIG_HEAD]];
+  rows.forEach(r=>{ const s=r.sc, c=r.cm; a6.push([r.id, r.ts, r.ddRaw, r.dd, r.consent?'ยินยอม':'ไม่ยินยอม', r.sex, r.age, r.freq, s[0],s[1],c[0], s[2],s[3],c[1], s[4],s[5],s[6],c[2], s[7],s[8],s[9],c[3], s[10],s[11],s[12],s[13], r.ret?'กลับ':'ไม่กลับ', r.rec?'แนะนำ':'ไม่แนะนำ', c[4]]); });
+  const ws6 = XLSX.utils.aoa_to_sheet(a6); ws6['!cols']=a6[0].map((h,i)=>({wch: i===0?6: i<=3?20: /ข้อติชม/.test(h)?40:14}));
+  ws6['!autofilter']={ref: XLSX.utils.encode_range({s:{r:0,c:0},e:{r:a6.length-1,c:a6[0].length-1}})};
+  XLSX.utils.book_append_sheet(wb, ws6, 'ข้อมูลดิบ');
+  XLSX.writeFile(wb, `สรุปความพึงพอใจ_บริจาคเลือด_${fileTag()}.xlsx`);
+  toast('สร้างไฟล์ Excel แล้ว');
+}
+$('#btnXlsx').addEventListener('click', exportExcel);
+$('#btnPdf').addEventListener('click', ()=>{
+  const prev = document.title; document.title = `สรุปความพึงพอใจ_บริจาคเลือด_${fileTag()}`;
+  document.body.classList.toggle('pr-cm', S.tab==='comments');
+  try{ window.print(); }catch(e){ toast('เปิดหน้าพิมพ์ไม่ได้ ลองกด Ctrl+P'); }
+  setTimeout(()=>{ document.title = prev; }, 1000);
+});
+
+$('#totalAll').textContent = nf(R.length);
+$('#fixCount').textContent = nf(R.filter(r=>r.ddFix).length);
+$('#dFrom').min = $('#dTo').min = '2025-10-01';
+render();
+</script>
+</body>
+</html>
