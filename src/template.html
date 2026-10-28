@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ความพึงพอใจผู้บริจาคเลือด 2569</title>
+<link rel="icon" type="image/png" href="{{FAVICON}}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -19,6 +20,7 @@
   --font:"IBM Plex Sans Thai", "Leelawadee UI", Tahoma, "Noto Sans Thai", sans-serif;
   --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
   --r:10px;
+  --band:#7a1224; --band-2:#a3172f;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -51,6 +53,11 @@ button,input,select{font:inherit;color:inherit}
 .mast{padding-block:28px 18px}
 .eyebrow{font-size:12.5px;letter-spacing:.06em;color:var(--accent);font-weight:600;display:flex;gap:8px;align-items:center}
 .eyebrow .drop{width:10px;height:13px;background:var(--accent);border-radius:50% 50% 50% 50%/62% 62% 38% 38%;clip-path:polygon(50% 0,100% 62%,92% 85%,70% 100%,30% 100%,8% 85%,0 62%)}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand img{width:56px;height:56px;flex:none}
+.brand div{display:flex;flex-direction:column;line-height:1.35;min-width:0}
+.brand b{font-size:16px;font-weight:600;color:var(--ink)}
+.brand span{font-size:13px;color:var(--ink-2)}
 .mast h1{font-size:clamp(22px,3.2vw,30px);font-weight:700;margin-top:6px}
 .mast .sub{color:var(--ink-2);margin-top:4px;font-size:14.5px}
 
@@ -186,8 +193,29 @@ tbody tr:last-child td{border-bottom:0}
 #toast.on{opacity:1}
 .printhead{display:none}
 
+/* login */
+html:not(.unlocked) body > :not(.login){display:none!important}
+html.unlocked .login{display:none}
+.login{min-height:100vh;display:grid;place-items:center;padding-block:24px;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));
+  background:radial-gradient(120% 70% at 50% 0%, var(--accent-soft), var(--bg) 70%)}
+.lcard{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 26px 24px;overflow:hidden;box-shadow:0 10px 30px rgb(40 0 10/.08);display:flex;flex-direction:column;gap:12px}
+.lband{margin:0 -26px 10px;padding:26px 40px 22px;background:linear-gradient(160deg,var(--band),var(--band-2));display:flex;justify-content:center}
+.lband img{display:block;width:100%;max-width:300px;height:auto}
+.lcard h1{font-size:21px;font-weight:700}
+.lcard .sub{color:var(--ink-2);font-size:14px;margin:-6px 0 6px}
+.lcard label{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.pwrow{display:flex;border:1px solid var(--line-2);border-radius:9px;background:var(--surface);overflow:hidden}
+.pwrow:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pwrow input{flex:1;min-width:0;border:0;background:transparent;padding:10px 12px;font-size:15px;outline:none}
+.pwrow button{border:0;border-left:1px solid var(--line);background:var(--sunk);padding:0 14px;font-size:13px;color:var(--ink-2);cursor:pointer}
+.lcard .btn.primary{justify-content:center;padding:10px 14px;font-size:15px;margin-top:4px}
+.lcard .btn[disabled]{opacity:.65;cursor:progress}
+.err{min-height:1.4em;margin:-4px 0 0;font-size:13.5px;color:var(--l1)}
+.lnote{font-size:12px;color:var(--muted);margin:4px 0 0;border-top:1px solid var(--line);padding-top:12px}
+.btn.ghost{background:transparent}
+
 @media (max-width:960px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.demo{grid-template-columns:1fr 1fr}.exports{margin-left:0}}
-@media (max-width:640px){.bar{position:static}.kpis{grid-template-columns:1fr 1fr}.two,.demo,.cmlist{grid-template-columns:1fr}.kpi b{font-size:24px}}
+@media (max-width:640px){.bar{position:static}.brand img{width:46px;height:46px}.brand b{font-size:14.5px}.brand span{font-size:12px}.kpis{grid-template-columns:1fr 1fr}.two,.demo,.cmlist{grid-template-columns:1fr}.kpi b{font-size:24px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 @media print{
@@ -206,6 +234,7 @@ tbody tr:last-child td{border-bottom:0}
   .panel{display:block!important;padding-block:0}
   .wrap{max-width:none;padding:0}
   .mast{padding-block:0 6px}
+  .brand{margin-bottom:8px;padding-bottom:8px}.brand img{width:44px;height:44px}
   .printhead{display:block;font-size:12px;color:var(--ink-2);margin-bottom:6px}
   .kpis{grid-template-columns:repeat(5,1fr);gap:6px}
   .kpi{padding:8px 10px}.kpi b{font-size:20px}
@@ -223,7 +252,26 @@ tbody tr:last-child td{border-bottom:0}
 </style>
 </head>
 <body>
+<div class="login" id="login">
+  <form class="lcard" id="loginForm" autocomplete="on">
+    <div class="lband"><img src="{{LOGO}}" alt="มหาวิทยาลัยมหิดล คณะแพทยศาสตร์ศิริราชพยาบาล ภาควิชาเวชศาสตร์การธนาคารเลือด" width="720" height="479"></div>
+    <div class="eyebrow"><span class="drop" aria-hidden="true"></span>ศูนย์รับบริจาคเลือดศิริราช</div>
+    <h1>สรุปผลความพึงพอใจผู้บริจาคเลือด</h1>
+    <p class="sub">ปีงบประมาณ 2569 · สำหรับเจ้าหน้าที่</p>
+    <input type="text" name="username" value="sibloodbank-dashboard" autocomplete="username" hidden>
+    <label for="pw">รหัสผ่าน</label>
+    <div class="pwrow"><input type="password" id="pw" autocomplete="current-password" required autofocus><button type="button" id="pwShow" aria-label="แสดงรหัสผ่าน">แสดง</button></div>
+    <p class="err" id="loginErr" role="alert"></p>
+    <button type="submit" class="btn primary" id="loginBtn">เข้าสู่ระบบ</button>
+    <p class="lnote">ข้อมูลในหน้านี้ถูกเข้ารหัสไว้ จะเปิดอ่านได้เมื่อใส่รหัสผ่านถูกต้องเท่านั้น</p>
+  </form>
+</div>
+
 <div class="wrap mast">
+  <div class="brand">
+    <img src="{{SEAL}}" alt="ตรามหาวิทยาลัยมหิดล" width="56" height="56">
+    <div><b>ภาควิชาเวชศาสตร์การธนาคารเลือด</b><span>คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</span></div>
+  </div>
   <div class="eyebrow"><span class="drop" aria-hidden="true"></span>ศูนย์รับบริจาคเลือดศิริราช · ห้องรับบริจาคเลือด</div>
   <h1>สรุปผลการประเมินความพึงพอใจของผู้บริจาคเลือด ปีงบประมาณ 2569</h1>
   <div class="sub">แบบประเมิน 5 จุดบริการ 14 ข้อ มาตราส่วน 5 ระดับ (5 = พึงพอใจมากที่สุด, 1 = พึงพอใจน้อยที่สุด)</div>
@@ -255,6 +303,7 @@ tbody tr:last-child td{border-bottom:0}
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 2v8m0 0L5 7m3 3 3-3M3 12.5h10"/></svg>Export Excel</button>
       <button type="button" class="btn primary" id="btnPdf" title="พิมพ์หน้าสรุปผล (ถ้าอยู่แท็บข้อติชม จะพิมพ์รายการข้อติชมที่กรองไว้ต่อท้าย) แล้วเลือกปลายทาง “บันทึกเป็น PDF”">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6V2h8v4M4 11H2.5V6h11v5H12M4 9h8v5H4z"/></svg>Export PDF</button>
+      <button type="button" class="btn ghost" id="btnLogout" title="ออกจากระบบ">ออกจากระบบ</button>
     </div>
   </div>
 </div>
@@ -335,7 +384,7 @@ tbody tr:last-child td{border-bottom:0}
 
 <script>/*__XLSX__*/</script>
 <script>
-const RAW = /*__DATA__*/;
+function boot(RAW){
 const R = RAW.map((r,i)=>({id:i+1, ts:r[0], tsd:r[0].slice(0,10), ddRaw:r[1], dd:r[2], ddFix:r[3], consent:r[4], sex:r[5], age:r[6], freq:r[7], sc:r[8], cm:r[9], ret:r[10], rec:r[11], low:r[8].some(v=>v<=3)}));
 
 const SECTIONS = ['จุดลงทะเบียนผู้บริจาคเลือด','จุดสัมภาษณ์ คัดกรองผู้บริจาคเลือด','จุดบริจาคเลือด','จุดบริการน้ำดื่ม','ภาพรวมการให้บริการของศูนย์ฯ'];
@@ -653,6 +702,39 @@ $('#totalAll').textContent = nf(R.length);
 $('#fixCount').textContent = nf(R.filter(r=>r.ddFix).length);
 $('#dFrom').min = $('#dTo').min = '2025-10-01';
 render();
+}
+</script>
+<script>
+const ENC = /*__ENC__*/;
+(function(){
+  const b64 = s=>Uint8Array.from(atob(s), c=>c.charCodeAt(0));
+  async function unlock(pw){
+    const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({name:'PBKDF2', salt:b64(ENC.s), iterations:ENC.n, hash:'SHA-256'}, km, {name:'AES-GCM', length:256}, false, ['decrypt']);
+    const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(ENC.i)}, key, b64(ENC.c));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  const form=document.getElementById('loginForm'), pw=document.getElementById('pw'), err=document.getElementById('loginErr'), btn=document.getElementById('loginBtn');
+  async function tryOpen(pass, silent){
+    if(!window.crypto || !crypto.subtle){ err.textContent='เบราว์เซอร์นี้ไม่รองรับการถอดรหัส กรุณาเปิดด้วย Chrome หรือ Edge'; return false; }
+    btn.disabled=true; btn.textContent='กำลังตรวจสอบ…';
+    try{
+      const data = await unlock(pass);
+      try{ sessionStorage.setItem('bd69-pw', pass); }catch(e){}
+      document.documentElement.classList.add('unlocked');
+      boot(data);
+      return true;
+    }catch(e){
+      if(!silent){ err.textContent='รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง'; pw.select(); }
+      return false;
+    }finally{ btn.disabled=false; btn.textContent='เข้าสู่ระบบ'; }
+  }
+  form.addEventListener('submit', e=>{ e.preventDefault(); err.textContent=''; tryOpen(pw.value); });
+  document.getElementById('pwShow').addEventListener('click', e=>{ const show = pw.type==='password'; pw.type = show?'text':'password'; e.target.textContent = show?'ซ่อน':'แสดง'; pw.focus(); });
+  document.getElementById('btnLogout').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('bd69-pw'); }catch(e){} location.reload(); });
+  let saved=null; try{ saved=sessionStorage.getItem('bd69-pw'); }catch(e){}
+  if(saved) tryOpen(saved, true);
+})();
 </script>
 </body>
 </html>
